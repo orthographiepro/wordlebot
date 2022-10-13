@@ -40,7 +40,7 @@ public:
                 }
             }
         }
-        score *= byLetters.size();
+        score *= byLetters.size();  
     }
 
     const bool holds(char c)
@@ -55,6 +55,18 @@ public:
     }
 
     const bool holdsFromList(const std::vector<char> &letterList) 
+    {
+        for (char c : letterList)
+        {
+            if (this->holds(c))
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    const bool holdsFromList(const std::set<char> &letterList) 
     {
         for (char c : letterList)
         {
@@ -82,7 +94,7 @@ public:
         return false;      
     }
 
-    const bool fitsInPattern(const std::vector<char> &givenOrder, const std::vector<char> &forbidden, const std::vector<char> &givenLetters)
+    const bool fitsInPattern(const std::vector<char> &givenOrder, const std::set<char> &forbidden, const std::set<char> &givenLetters)
     {
         if (this->holdsFromList(forbidden))
             return false; // test gray
@@ -92,7 +104,6 @@ public:
             if (this->byLetters.find(c) == byLetters.end())
                 return false; // test yellow
         }
-        
 
         if (this->confirmedWrongOrder(givenOrder))
             return false; //test green
@@ -110,11 +121,6 @@ std::ostream& operator<<(std::ostream& os, const word &w)
             os << w.byOrder[i];
         }        
         return os;
-}
-
-void eliminateWords(std::forward_list<word> &workingList, const std::vector<char> &forbidden, const std::vector<char> &byOrder, const std::vector<char> &byLetters)
-{
-    workingList.remove_if([&](word w){ return !w.fitsInPattern(byOrder, forbidden, byLetters); });    
 }
 
 int main(int argc, char const *argv[])
@@ -144,10 +150,12 @@ int main(int argc, char const *argv[])
         wordlist.push_back(std::make_pair(word(w), score));
         std::getline(input, w);
     }
+    //maybe change the metric used to calculate word score
 
     std::sort(wordlist.begin(), wordlist.end(), [&](std::pair<word, long> a, std::pair<word, long> b){return a.second >= b.second;} );
     
     // convert to list -> fast deletion, order is kept at deletions
+    //sort descending -> taking last element, pushing it keeps descending order, keeping most important words upfront 
 
     std::forward_list<word> linear_wordlist;
     while (wordlist.empty() == false)
@@ -157,20 +165,20 @@ int main(int argc, char const *argv[])
     }    
     input.close();
 
-    std::vector<char> forbidden;
+    std::set<char> forbidden;
     std::vector<char> givenOrder {'X','X','X','X','X'};
-    std::vector<char> givenLetters;
+    std::set<char> givenLetters;
 
     for (int i = 0; i < 6; i++)
     {
         std::string buf;
 
-        std::cout << "enter guess: ";
+        std::cout << "Enter guess: ";
         std::cin >> buf;
-        std::cout << std::endl;
+        //std::cout << std::endl;
         word guess = word(buf);
         
-        std::cout << "enter response: ";
+        std::cout << "Enter response: ";
         std::cin >> buf;
         std::cout << std::endl;
 
@@ -180,19 +188,16 @@ int main(int argc, char const *argv[])
             switch (c)
             {
             case gray:
-                forbidden.push_back(guess.at(j));
-                // std::cout << "added "<< c << " to blacklist" << std::endl;
+                forbidden.insert(guess.at(j));
                 break;
             case green:
-                givenLetters.push_back(guess.at(j));
+                givenLetters.insert(guess.at(j));
                 givenOrder[j] = guess.at(j);
 
                 break;
             case yellow:
-                // given order at j not c
-
-                // std::cout << "added "<< c << " to letter list" << std::endl;
-                givenLetters.push_back(guess.at(j));
+                // TODO: given order at j not c
+                givenLetters.insert(guess.at(j));
                 break;
             
             default:
@@ -205,30 +210,39 @@ int main(int argc, char const *argv[])
         {
             std::cout << c << " ";
         }
-        std::cout << "forbidden" << std::endl;
+        std::cout << "<< Letters known not to be in the word." << std::endl;
         for (char c : givenLetters)
         {
             std::cout << c << " ";
         }
-        std::cout << "letter" << std::endl;
+        std::cout << "<< Letters known to be in word." << std::endl;
         for (char c : givenOrder)
         {
             std::cout << c << " ";
         }
-        std::cout << "order" << std::endl;
+        std::cout << "<< Known order." << std::endl << std::endl;
 
-        int num = 0;
-        num = linear_wordlist.remove_if([&](word w){ return !w.fitsInPattern(givenOrder, forbidden, givenLetters); });
-        std::cout << num << std::endl;
+        //check logic: 
+        for (char c : givenLetters)
+        {
+            if (forbidden.find(c) != forbidden.end())
+            {
+                std::cout << "There appears to be an logic error" << std::endl;
+                return 1;
+            }
+        }
+
+        int num = linear_wordlist.remove_if([&](word w){ return !w.fitsInPattern(givenOrder, forbidden, givenLetters); }); // compile with cpp 20
+        std::cout << "Removed " << num << " entries from list."<< std::endl << std::endl;
 
         char c;
         do
         {   
             if (linear_wordlist.empty())
-                std::cout <<" hm ungut";
+                std::cout <<" hm ungut" << std::endl;
             else 
             {
-                std::cout << "suggestion:" << linear_wordlist.front() << std::endl <<  "next suggestion?";
+                std::cout << "Suggestion: " << linear_wordlist.front() << std::endl <<  "Different suggestion? (y/n) ";
                 linear_wordlist.pop_front();
             }
             std::cin >> c;
