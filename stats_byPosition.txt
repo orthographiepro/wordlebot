@@ -1,0 +1,12 @@
+Sorted by frequency in line 0: {'c', 'b', 'd', 'a', 's', 'f', 'e', 't', 'p', 'r', 'l', 'm', 'w', 'g', 'h', 'n', 'v', 'o', 'u', 'i', 'k', 'j', 'q', 'y', 'z', 'x'}
+
+Sorted by frequency in line 1: {'o', 'a', 'r', 'e', 'i', 'l', 'u', 'h', 'n', 't', 'p', 'm', 'c', 'd', 'w', 'x', 's', 'y', 'b', 'g', 'v', 'f', 'k', 'q', 'z', 'j'}
+
+Sorted by frequency in line 2: {'a', 'i', 'o', 'r', 'e', 'n', 'l', 'u', 't', 's', 'd', 'c', 'g', 'm', 'v', 'p', 'b', 'k', 'w', 'f', 'x', 'y', 'z', 'h', 'j', 'q'}
+
+Sorted by frequency in line 3: {'e', 't', 'n', 'l', 'a', 'r', 'i', 'o', 'c', 's', 'd', 'k', 'm', 'g', 'p', 'u', 'b', 'f', 'w', 'h', 'v', 'z', 'y', 'j', 'x', 'q'}
+
+Sorted by frequency in line 4: {'s', 'e', 'y', 't', 'd', 'r', 'l', 'n', 'h', 'k', 'a', 'o', 'p', 'm', 'g', 'c', 'f', 'i', 'w', 'x', 'b', 'u', 'z', 'j', 'q', 'v'}
+
+Sorted by total frequency: {'e', 's', 'a', 'r', 'o', 'l', 'i', 'c', 't', 'd', 'n', 'b', 'u', 'h', 'p', 'y', 'm', 'f', 'g', 'k', 'w', 'v', 'x', 'z', 'j', 'q'}
+

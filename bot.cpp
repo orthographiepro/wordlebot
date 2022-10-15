@@ -16,7 +16,6 @@ class word
 private:
     std::vector<char> byOrder;
     std::set<char> byLetters;
-    long score = 0;
 
 public:
     word(std::string input)
@@ -29,18 +28,11 @@ public:
             byLetters.insert(c);
         }
 
-        for (char c : byLetters)
-        {
-            for (size_t i = 0; i < 26; i++)
-            {
-                if (c == byFrequency.at(i))
-                {
-                    score += 26-i;
-                    break;
-                }
-            }
-        }
-        score *= byLetters.size();  
+    }
+
+    int differentCharacters()
+    {
+        return byLetters.size();
     }
 
     const bool holds(char c)
@@ -147,7 +139,9 @@ int main(int argc, char const *argv[])
                 }
             }
         }
-        wordlist.push_back(std::make_pair(word(w), score));
+        word temp_word = word(w);
+        score = (int)(score * temp_word.differentCharacters()*temp_word.differentCharacters() / 3);
+        wordlist.push_back(std::make_pair(temp_word, score));
         std::getline(input, w);
     }
     //maybe change the metric used to calculate word score
